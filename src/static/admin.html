@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Venue Orbit Admin — Event Control Portal</title>
+  
+  <!-- Typography Fonts from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Lora:ital,wght@0,400..700;1,400..700&family=Outfit:wght@100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Admin specific layout adjustments */
+    .admin-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    
+    .add-event-btn {
+      background: var(--btn-bg);
+      color: var(--btn-text);
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 30px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: var(--body-font);
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px var(--accent-glow);
+    }
+    
+    .add-event-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px var(--accent-color);
+    }
+    
+    .table-container {
+      background: var(--card-bg);
+      border: var(--card-border);
+      border-radius: 16px;
+      overflow-x: auto;
+      backdrop-filter: var(--panel-blur);
+      margin-bottom: 3rem;
+    }
+    
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+    
+    .admin-table th, .admin-table td {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .admin-table th {
+      background: rgba(0, 0, 0, 0.2);
+      font-weight: 700;
+      color: var(--accent-color);
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+    }
+    
+    .admin-table tbody tr:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    
+    .action-badge {
+      display: inline-block;
+      padding: 0.35rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      margin-right: 0.5rem;
+      transition: all 0.2s ease;
+      font-family: var(--body-font);
+      text-align: center;
+    }
+    
+    .edit-badge {
+      background: rgba(0, 240, 200, 0.1);
+      border: 1px solid var(--accent-color);
+      color: var(--accent-color);
+    }
+    
+    .edit-badge:hover {
+      background: var(--accent-color);
+      color: var(--btn-text);
+    }
+    
+    .delete-badge {
+      background: rgba(255, 99, 132, 0.1);
+      border: 1px solid rgb(255, 99, 132);
+      color: rgb(255, 99, 132);
+    }
+    
+    .delete-badge:hover {
+      background: rgb(255, 99, 132);
+      color: white;
+    }
+
+    .duplicate-badge {
+      background: rgba(38, 166, 154, 0.1);
+      border: 1px solid rgb(38, 166, 154);
+      color: rgb(38, 166, 154);
+    }
+    
+    .duplicate-badge:hover {
+      background: rgb(38, 166, 154);
+      color: white;
+    }
+    
+    .admin-form-dialog {
+      border: none;
+      background: transparent;
+      max-width: 580px;
+      width: 90%;
+      margin: auto;
+      border-radius: 24px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      outline: none;
+    }
+    
+    .form-group {
+      margin-bottom: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    
+    .form-group label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+    
+    .form-group input, .form-group select, .form-group textarea {
+      background: rgba(0, 0, 0, 0.3);
+      border: var(--card-border);
+      color: var(--text-main);
+      padding: 0.75rem;
+      border-radius: 10px;
+      font-family: var(--body-font);
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+    
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 8px var(--accent-glow);
+    }
+    
+    .form-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      margin-top: 1.75rem;
+    }
+    
+    .form-submit-btn {
+      background: var(--btn-bg);
+      color: var(--btn-text);
+      border: none;
+      padding: 0.65rem 1.5rem;
+      border-radius: 25px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: var(--body-font);
+      transition: all 0.3s ease;
+    }
+    
+    .form-submit-btn:hover {
+      transform: translateY(-1px);
+    }
+    
+    .form-cancel-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: var(--card-border);
+      color: var(--text-main);
+      padding: 0.65rem 1.5rem;
+      border-radius: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--body-font);
+      transition: all 0.3s ease;
+    }
+    
+    .form-cancel-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .nav-link {
+      color: var(--accent-color);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      transition: opacity 0.2s ease;
+    }
+    
+    .nav-link:hover {
+      opacity: 0.8;
+    }
+
+    /* Admin Tabs Styling */
+    .admin-tabs {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 0.75rem;
+    }
+
+    .admin-tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--body-font);
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .admin-tab-btn:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .admin-tab-btn.active {
+      color: var(--accent-color);
+      background: var(--accent-glow);
+      border: var(--card-border);
+    }
+
+    .admin-panel {
+      display: none;
+    }
+
+    .admin-panel.active {
+      display: block;
+    }
+
+    /* Drag & Drop Bulk Uploader styling */
+    .csv-dropzone {
+      border: 2px dashed var(--accent-color);
+      border-radius: 16px;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 3rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: 2rem;
+    }
+
+    .csv-dropzone:hover, .csv-dropzone.dragover {
+      background: var(--accent-glow);
+      transform: scale(1.01);
+    }
+
+    .csv-icon {
+      font-size: 3rem;
+      display: block;
+      margin-bottom: 1rem;
+    }
+
+    .bulk-instructions {
+      background: rgba(255, 255, 255, 0.02);
+      border: var(--card-border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      font-family: monospace;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body class="theme-luxury">
+  
+  <div class="ambient-glow" aria-hidden="true"></div>
+
+  <header class="app-header">
+    <div class="header-container">
+      <div class="logo-area">
+        <span class="logo-icon">🪐</span>
+        <h1 class="logo-text">VENUE ORBIT <span style="font-size:0.75em; font-weight:300;">ADMIN</span></h1>
+      </div>
+      
+      <div style="display:flex; align-items:center; gap:1.5rem;">
+        <a href="index.html" class="nav-link">← Event Feed</a>
+        
+        <!-- Theme Switcher Control -->
+        <div class="theme-switcher">
+          <div class="switcher-buttons">
+            <button class="theme-btn active" data-theme="luxury">🪵 Luxury</button>
+            <button class="theme-btn" data-theme="orbit">⚡ Orbit</button>
+            <button class="theme-btn" data-theme="nordic">🌿 Nordic</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="app-main" style="padding: 2rem; max-width: 1400px; margin: 0 auto;">
+    
+    <!-- Tab Controls -->
+    <div class="admin-tabs">
+      <button class="admin-tab-btn active" onclick="switchTab('events-tab', this)">🎫 Events</button>
+      <button class="admin-tab-btn" onclick="switchTab('venues-tab', this)">🏢 Venues</button>
+      <button class="admin-tab-btn" onclick="switchTab('dining-tab', this)">🍔 Dining Mappings</button>
+      <button class="admin-tab-btn" onclick="switchTab('bulk-tab', this)">📊 Bulk Import (Spreadsheets)</button>
+    </div>
+
+    <!-- ==================================================================== -->
+    <!-- 1. EVENTS PANEL -->
+    <!-- ==================================================================== -->
+    <div id="events-tab" class="admin-panel active">
+      <div class="admin-controls">
+        <div style="display:flex; gap:1rem; flex-wrap:wrap; flex:1; min-width: 280px;">
+          <div class="search-box" style="flex: 1; min-width: 180px;">
+            <input type="text" id="admin-search-title" placeholder="Filter by Title..." style="width: 100%;">
+          </div>
+          <div class="search-box" style="flex: 1; min-width: 180px;">
+            <input type="text" id="admin-search-venue" placeholder="Filter by Venue..." style="width: 100%;">
+          </div>
+          <div class="search-box" style="flex: 1; min-width: 180px;">
+            <input type="text" id="admin-search-date" placeholder="Filter by Date (YYYY-MM-DD)..." style="width: 100%;">
+          </div>
+        </div>
+        <button id="add-event-trigger" class="add-event-btn">➕ Add Manual Event</button>
+      </div>
+
+      <div class="table-container">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Category</th>
+              <th>Event Title</th>
+              <th>Venue</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="admin-table-body">
+            <tr>
+              <td colspan="7" class="loading-state">
+                <span class="spinner"></span> Reading database entries...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ==================================================================== -->
+    <!-- 2. VENUES PANEL -->
+    <!-- ==================================================================== -->
+    <div id="venues-tab" class="admin-panel">
+      <div class="admin-controls" style="justify-content: flex-end;">
+        <button onclick="openVenueModal()" class="add-event-btn">🏢 Add Manual Venue</button>
+      </div>
+
+      <div class="table-container">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Latitude</th>
+              <th>Longitude</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="venues-table-body">
+            <!-- Loaded by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ==================================================================== -->
+    <!-- 3. DINING PANEL -->
+    <!-- ==================================================================== -->
+    <div id="dining-tab" class="admin-panel">
+      <div class="admin-controls" style="justify-content: flex-end;">
+        <button onclick="openDiningModal()" class="add-event-btn">🍔 Add Walkable Dining Mapping</button>
+      </div>
+
+      <div class="table-container">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Venue</th>
+              <th>Restaurant Name</th>
+              <th>Distance (Miles)</th>
+              <th>Address</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="dining-table-body">
+            <!-- Loaded by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ==================================================================== -->
+    <!-- 4. BULK SPREADSHEET IMPORT PANEL -->
+    <!-- ==================================================================== -->
+    <div id="bulk-tab" class="admin-panel">
+      <div style="max-width: 800px; margin: 0 auto;">
+        <h2 style="font-family:var(--heading-font); color:var(--accent-color); margin-bottom: 1rem;">Spreadsheet Bulk Uploader</h2>
+        <p style="color:var(--text-muted); font-size: 0.95rem; margin-bottom: 2rem;">
+          Export your spreadsheets (Excel or Google Sheets) as **CSV format** and upload them below to batch insert records directly into the SQLite database.
+        </p>
+
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+          <label for="bulk-type-select">Select Import Target Type *</label>
+          <select id="bulk-type-select" style="width: 100%; max-width: 400px;">
+            <option value="venues">🏢 Venues (Spreadsheet)</option>
+            <option value="events">🎫 Events (Spreadsheet)</option>
+            <option value="dining">🍔 Nearby Walkable Dining (Spreadsheet)</option>
+          </select>
+        </div>
+
+        <div id="csv-dropzone" class="csv-dropzone" onclick="document.getElementById('csv-file-input').click()">
+          <span class="csv-icon">📋</span>
+          <h3>Drag & Drop CSV File here</h3>
+          <p style="color:var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">or click to browse your desktop files</p>
+          <input type="file" id="csv-file-input" accept=".csv" style="display:none;" onchange="handleCSVFileSelected(event)">
+        </div>
+
+        <div id="bulk-upload-status" style="font-size: 1.1rem; color: var(--accent-color); font-weight: 700; text-align: center; margin-bottom: 1.5rem;"></div>
+
+        <div class="bulk-instructions">
+          <h4>📋 Spreadsheet Headers Checklist (Required matching names):</h4>
+          <br>
+          <strong>🏢 Venues CSV format:</strong>
+          <p>name, category, lat, lng</p>
+          <br>
+          <strong>🎫 Events CSV format:</strong>
+          <p>venue_name, title, date, time, ticket_url, description, image_url</p>
+          <br>
+          <strong>🍔 Walkable Dining CSV format:</strong>
+          <p>restaurant_name, lat, lng, menu_url, address, venue_name, distance_miles</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Add/Edit Event Dialog Modal -->
+  <dialog id="admin-dialog" class="admin-form-dialog">
+    <div class="dialog-wrapper">
+      <header class="dialog-header">
+        <h3 id="dialog-mode-title" style="float:left; font-family:var(--heading-font); color:var(--accent-color);">Add Event</h3>
+        <button id="close-admin-dialog" class="close-btn" aria-label="Close form">&times;</button>
+      </header>
+      <br>
+      <form id="admin-event-form" onsubmit="handleFormSubmit(event)">
+        <!-- Hidden input for editing event ID -->
+        <input type="hidden" id="event-id-field">
+
+        <div class="form-group">
+          <label for="venue-select-field">Venue *</label>
+          <select id="venue-select-field" required>
+            <option value="">-- Select Target Venue --</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="title-field">Event Title *</label>
+          <input type="text" id="title-field" required placeholder="e.g. Shakespeare in the Park">
+        </div>
+
+        <div class="form-group">
+          <label for="date-field">Event Date (YYYY-MM-DD or TBD) *</label>
+          <input type="text" id="date-field" required placeholder="YYYY-MM-DD or TBD" value="TBD">
+        </div>
+
+        <div class="form-group">
+          <label for="time-field">Showtime</label>
+          <input type="text" id="time-field" placeholder="e.g. 7:30 PM">
+        </div>
+
+        <div class="form-group">
+          <label for="ticket-field">Ticket URL</label>
+          <input type="url" id="ticket-field" placeholder="https://ticket-platform.com/buy">
+        </div>
+
+        <div class="form-group">
+          <label for="image-url-field">Image URL (PNG/JPG)</label>
+          <div style="display:flex; gap:0.5rem; align-items:center;">
+            <input type="text" id="image-url-field" placeholder="https://website.com/image.png" style="flex:1;">
+            <label class="form-cancel-btn" style="padding:0.6rem 1rem; margin:0; text-align:center; font-size:0.8rem; border-radius:10px; display:inline-flex; align-items:center; cursor:pointer;">
+              📎 Upload Image File
+              <input type="file" id="image-file-input" accept="image/*" style="display:none;" onchange="handleImageFileUpload(this)">
+            </label>
+          </div>
+          <span id="upload-status" style="font-size:0.75rem; color:var(--accent-color); font-weight:600; display:none;"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="desc-field">Description</label>
+          <textarea id="desc-field" rows="3" placeholder="Summary details for the event..."></textarea>
+        </div>
+
+        <div class="form-buttons">
+          <button type="button" id="cancel-admin-dialog" class="form-cancel-btn">Cancel</button>
+          <button type="submit" class="form-submit-btn">Save Event</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Add/Edit Venue Dialog Modal -->
+  <dialog id="venue-dialog" class="admin-form-dialog">
+    <div class="dialog-wrapper">
+      <header class="dialog-header">
+        <h3 id="venue-dialog-title" style="float:left; font-family:var(--heading-font); color:var(--accent-color);">Add Venue</h3>
+        <button onclick="document.getElementById('venue-dialog').close()" class="close-btn" aria-label="Close form">&times;</button>
+      </header>
+      <br>
+      <form id="admin-venue-form" onsubmit="handleVenueFormSubmit(event)">
+        <input type="hidden" id="venue-id-field">
+
+        <div class="form-group">
+          <label for="venue-name-field">Venue Name *</label>
+          <input type="text" id="venue-name-field" required placeholder="e.g. Iron City Bham">
+        </div>
+
+        <div class="form-group">
+          <label for="venue-category-field">Category *</label>
+          <select id="venue-category-field" required>
+            <option value="Music">🎸 Music</option>
+            <option value="Theatre">🎭 Theatre</option>
+            <option value="Concerts">🎺 Concerts</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="venue-lat-field">Latitude</label>
+          <input type="number" id="venue-lat-field" step="any" placeholder="33.5186">
+        </div>
+
+        <div class="form-group">
+          <label for="venue-lng-field">Longitude</label>
+          <input type="number" id="venue-lng-field" step="any" placeholder="-86.8104">
+        </div>
+
+        <div class="form-buttons">
+          <button type="button" onclick="document.getElementById('venue-dialog').close()" class="form-cancel-btn">Cancel</button>
+          <button type="submit" class="form-submit-btn">Save Venue</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Add Dining Link Dialog Modal -->
+  <dialog id="dining-dialog" class="admin-form-dialog">
+    <div class="dialog-wrapper">
+      <header class="dialog-header">
+        <h3 style="float:left; font-family:var(--heading-font); color:var(--accent-color);">Link Walkable Dining</h3>
+        <button onclick="document.getElementById('dining-dialog').close()" class="close-btn" aria-label="Close form">&times;</button>
+      </header>
+      <br>
+      <form id="admin-dining-form" onsubmit="handleDiningFormSubmit(event)">
+        <div class="form-group">
+          <label for="dining-venue-select">Select Target Venue *</label>
+          <select id="dining-venue-select" required>
+            <option value="">-- Choose Venue --</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="dining-name-field">Restaurant Name *</label>
+          <input type="text" id="dining-name-field" required placeholder="e.g. Paramount Bar">
+        </div>
+
+        <div class="form-group">
+          <label for="dining-distance-field">Distance in Miles *</label>
+          <input type="number" id="dining-distance-field" step="0.01" required placeholder="0.25">
+        </div>
+
+        <div class="form-group">
+          <label for="dining-menu-field">Menu/Website Link</label>
+          <input type="url" id="dining-menu-field" placeholder="https://paramountbham.com/menu">
+        </div>
+
+        <div class="form-group">
+          <label for="dining-address-field">Address</label>
+          <input type="text" id="dining-address-field" placeholder="200 20th St N, Birmingham, AL 35203">
+        </div>
+
+        <div class="form-group">
+          <label for="dining-lat-field">Latitude (Optional)</label>
+          <input type="number" id="dining-lat-field" step="any" placeholder="33.5186">
+        </div>
+
+        <div class="form-group">
+          <label for="dining-lng-field">Longitude (Optional)</label>
+          <input type="number" id="dining-lng-field" step="any" placeholder="-86.8104">
+        </div>
+
+        <div class="form-buttons">
+          <button type="button" onclick="document.getElementById('dining-dialog').close()" class="form-cancel-btn">Cancel</button>
+          <button type="submit" class="form-submit-btn">Save Link</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <script src="admin.js"></script>
+</body>
+</html>

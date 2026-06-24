@@ -1,0 +1,260 @@
+{
+  "city_name": "Birmingham",
+  "state": "AL",
+  "coordinates": {
+    "lat": 33.5186,
+    "lng": -86.8104
+  },
+  "search_radius_miles": 0.5,
+  "venues": [
+    {
+      "name": "Alabama Theatre",
+      "category": "Theatre",
+      "schedule_url": "https://alabamatheatre.com/events/",
+      "parser_type": "json_ld",
+      "selectors": {
+        "event_container": "script[type='application/ld+json']",
+        "title": "name",
+        "date": "startDate",
+        "time": "startDate",
+        "image": "image"
+      }
+    },
+    {
+      "name": "Lyric Theatre",
+      "category": "Theatre",
+      "schedule_url": "https://lyricbham.com/events/",
+      "parser_type": "json_ld",
+      "selectors": {
+        "event_container": "script[type='application/ld+json']",
+        "title": "name",
+        "date": "startDate",
+        "time": "startDate",
+        "image": "image"
+      }
+    },
+    {
+      "name": "BJCC",
+      "category": "Concerts",
+      "schedule_url": "https://www.bjcc.org/events/",
+      "parser_type": "json_ld",
+      "selectors": {
+        "event_container": "script[type='application/ld+json']",
+        "title": "name",
+        "date": "startDate",
+        "time": "startDate",
+        "image": "image"
+      }
+    },
+    {
+      "name": "Iron City Bham",
+      "category": "Music",
+      "schedule_url": "https://ironcitybham.com/events/",
+      "parser_type": "standard_html",
+      "selectors": {
+        "event_container": "div.tw-section",
+        "title": ".tw-name",
+        "date": ".tw-event-date",
+        "time": ".tw-event-date",
+        "ticket_url": "a.tw-buy-tix-btn",
+        "image": "img.photo"
+      }
+    },
+    {
+      "name": "The Nick",
+      "category": "Music",
+      "schedule_url": "https://thenickrocks.com/events/",
+      "parser_type": "standard_html",
+      "selectors": {
+        "event_container": "div.tw-section",
+        "title": ".tw-name",
+        "date": ".tw-event-date",
+        "time": ".tw-event-date",
+        "ticket_url": "a.tw-buy-tix-btn",
+        "image": "img.photo"
+      }
+    },
+    {
+      "name": "Saturn Birmingham",
+      "category": "Music",
+      "schedule_url": "https://saturnbirmingham.com/calendar/",
+      "parser_type": "standard_html",
+      "selectors": {
+        "event_container": "div.seetickets-list-event-container",
+        "title": "p.event-title a",
+        "date": "p.event-date",
+        "time": ".see-showtime",
+        "ticket_url": "a.button-gettickets",
+        "image": "div.event-image-container img"
+      }
+    },
+    {
+      "name": "WorkPlay",
+      "category": "Music",
+      "schedule_url": "https://workplay.com/events/",
+      "parser_type": "standard_html",
+      "selectors": {
+        "event_container": "a.event-card",
+        "title": "h3.event-title",
+        "date": "i.bi-calendar-event + span",
+        "time": "i.bi-clock + span",
+        "ticket_url": "self",
+        "image": "div.card-img-top img"
+      }
+    },
+    {
+      "name": "Avondale Brewing",
+      "category": "Music",
+      "schedule_url": "https://www.avondalebrewing.com/calendar-tickets",
+      "parser_type": "standard_html",
+      "selectors": {
+        "event_container": "article.eventlist-event",
+        "title": "a.eventlist-title-link",
+        "date": "time.event-date",
+        "time": "time.event-time-localized-start",
+        "ticket_url": "a.eventlist-title-link",
+        "image": "img.eventlist-thumbnail"
+      }
+    },
+    {
+      "name": "Woodlawn Theatre",
+      "category": "Music",
+      "schedule_url": "https://www.woodlawntheatrebham.com/events",
+      "parser_type": "standard_html",
+      "selectors": {
+        "event_container": "article.eventlist-event",
+        "title": "a.eventlist-title-link",
+        "date": "time.event-date",
+        "time": "time.event-time-localized-start",
+        "ticket_url": "a.eventlist-title-link",
+        "image": "img.eventlist-thumbnail"
+      }
+    },
+    {
+      "name": "Alys Stephens Center",
+      "category": "Concerts",
+      "schedule_url": "https://www.alysstephens.org/events/",
+      "parser_type": "standard_html",
+      "selectors": {
+        "event_container": "div.event-list-details",
+        "title": "h3.event-title a",
+        "date": "time",
+        "time": "time",
+        "ticket_url": "h3.event-title a",
+        "image": "div.event-image-container img"
+      }
+    },
+    {
+      "name": "Terrific New Theatre",
+      "category": "Theatre",
+      "schedule_url": "https://www.terrificnewtheatre.com/",
+      "parser_type": "standard_html",
+      "selectors": {
+        "event_container": "a[href*='2025-26-full/'], a[href*='2026-2027/']",
+        "title": "self",
+        "date": "self",
+        "time": "self",
+        "ticket_url": "self",
+        "image": "img"
+      }
+    },
+    {
+      "name": "Red Mountain Theatre",
+      "category": "Theatre",
+      "schedule_url": "https://redmountaintheatre.org/main-events-list/",
+      "parser_type": "standard_html",
+      "selectors": {
+        "event_container": "div.card",
+        "title": "h3.fl-heading",
+        "date": "h3.fl-heading + div",
+        "time": "h3.fl-heading + div",
+        "ticket_url": "a[href*='salesforce']",
+        "image": "div.fl-photo-img img"
+      }
+    },
+    {
+      "name": "Virginia Samford Theatre",
+      "category": "Theatre",
+      "schedule_url": "https://www.virginiasamfordtheatre.org/",
+      "parser_type": "standard_html",
+      "selectors": {
+        "event_container": "a[href*='production']",
+        "title": "img",
+        "date": "img",
+        "time": "img",
+        "ticket_url": "self",
+        "image": "img"
+      }
+    },
+    {
+      "name": "Theatre Downtown",
+      "category": "Theatre",
+      "schedule_url": "https://www.theatredowntown.org/onstagenow-2",
+      "parser_type": "standard_html",
+      "selectors": {
+        "event_container": "div.sqs-block-button-container",
+        "title": "a",
+        "date": "a",
+        "time": "a",
+        "ticket_url": "a[href*='universe.com']",
+        "image": "div.image-block img"
+      }
+    },
+    {
+      "name": "Dorothy Jemison Day Theater",
+      "category": "Theatre",
+      "schedule_url": "https://djdtheater.org/events/",
+      "parser_type": "standard_html",
+      "selectors": {
+        "event_container": "div.elementor-column",
+        "title": "div.elementor-widget-heading h2",
+        "date": "div.elementor-widget-heading + div.elementor-widget-heading h2",
+        "time": "div.elementor-widget-heading + div.elementor-widget-heading h2",
+        "ticket_url": "a[href*='patronbase.com']",
+        "image": "div.elementor-image img"
+      }
+    },
+    {
+      "name": "Encore Bham",
+      "category": "Theatre",
+      "schedule_url": "https://encorebham.ludus.com/index.php",
+      "parser_type": "standard_html",
+      "selectors": {
+        "event_container": "div.show_item",
+        "title": "h2.show_item_title span",
+        "date": "h2.show_item_title span",
+        "time": "h2.show_item_title span",
+        "ticket_url": "a[href*='show_page.php']",
+        "image": "div.show_item_img img"
+      }
+    },
+    {
+      "name": "Homewood Theatre",
+      "category": "Theatre",
+      "schedule_url": "https://homewoodtheatre.ludus.com/index.php",
+      "parser_type": "standard_html",
+      "selectors": {
+        "event_container": "div.show_item",
+        "title": "h2.show_item_title span",
+        "date": "h2.show_item_title span",
+        "time": "h2.show_item_title span",
+        "ticket_url": "a[href*='show_page.php']",
+        "image": "div.show_item_img img"
+      }
+    },
+    {
+      "name": "Historic Neely Theater",
+      "category": "Theatre",
+      "schedule_url": "https://historicneelytheatre.ludus.com/index.php",
+      "parser_type": "standard_html",
+      "selectors": {
+        "event_container": "div.show_item",
+        "title": "h2.show_item_title span",
+        "date": "h2.show_item_title span",
+        "time": "h2.show_item_title span",
+        "ticket_url": "a[href*='show_page.php']",
+        "image": "div.show_item_img img"
+      }
+    }
+  ]
+}

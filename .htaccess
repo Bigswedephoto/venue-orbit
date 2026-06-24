@@ -1,0 +1,5 @@
+# Route domain requests to the 10_Venue_Orbit subdirectory
+RewriteEngine On
+RewriteCond %{HTTP_HOST} ^(www\.)?venue-orbit\.com$ [NC]
+RewriteCond %{REQUEST_URI} !^/10_Venue_Orbit/
+RewriteRule ^(.*)$ /10_Venue_Orbit/$1 [L]

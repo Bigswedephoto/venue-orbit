@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Venue Orbit — Birmingham Nightlife Aggregator</title>
+  
+  <!-- Typography Fonts from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Lora:ital,wght@0,400..700;1,400..700&family=Outfit:wght@100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+  
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+  <!-- Leaflet JS (loaded before app.js) -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+</head>
+<body class="theme-luxury"> <!-- Defaults to Midnight Luxury -->
+  
+  <!-- Ambient background elements for dynamic themes -->
+  <div class="ambient-glow" aria-hidden="true"></div>
+
+  <header class="app-header">
+    <div class="header-container">
+      <div class="logo-area">
+        <span class="logo-icon">🪐</span>
+        <h1 class="logo-text">VENUE ORBIT</h1>
+      </div>
+      
+      <!-- Theme Switcher Control -->
+      <div class="theme-switcher">
+        <label for="theme-select" class="sr-only">Switch UI Theme</label>
+        <div class="switcher-buttons">
+          <button class="theme-btn active" data-theme="luxury" title="Midnight Luxury">🪵 Luxury</button>
+          <button class="theme-btn" data-theme="orbit" title="Neon Orbit">⚡ Orbit</button>
+          <button class="theme-btn" data-theme="nordic" title="Nordic Glass">🌿 Nordic</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <!-- Filter Bar -->
+    <section class="filter-section">
+      <div class="filter-container">
+        <div class="search-box">
+          <input type="text" id="event-search" placeholder="Search shows, artists, or venues..." autocomplete="off">
+        </div>
+        <div class="tabs-container">
+          <button class="filter-tab active" data-time="all">All Events</button>
+          <button class="filter-tab" data-time="tonight">Tonight</button>
+          <button class="filter-tab" data-time="weekend">This Weekend</button>
+        </div>
+        <div class="category-filters">
+          <button class="cat-pill active" data-cat="all">All Genres</button>
+          <button class="cat-pill" data-cat="Music">🎸 Music</button>
+          <button class="cat-pill" data-cat="Theatre">🎭 Theatre</button>
+          <button class="cat-pill" data-cat="Concerts">🎺 Concerts</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Content Layout (Grid) -->
+    <div class="content-layout">
+      <!-- Events Grid/List Feed -->
+      <section class="events-section">
+        <h2 class="section-title">Upcoming Seed Runs</h2>
+        <div id="events-grid" class="events-grid">
+          <!-- Dynamically populated event cards -->
+          <div class="loading-state">
+            <span class="spinner"></span> Loading Birmingham's orbit...
+          </div>
+        </div>
+      </section>
+
+      <!-- Desktop Map Panel -->
+      <aside class="map-sidebar">
+        <!-- Interactive Calendar Widget -->
+        <div class="calendar-card">
+          <div class="calendar-header-row">
+            <div class="calendar-title-group">
+              <span class="calendar-icon">📅</span>
+              <h3>Interactive Calendar</h3>
+            </div>
+            <div class="calendar-nav">
+              <button id="prev-month" class="cal-nav-btn" aria-label="Previous Month">&lt;</button>
+              <span id="calendar-month-year" class="calendar-month-year">June 2026</span>
+              <button id="next-month" class="cal-nav-btn" aria-label="Next Month">&gt;</button>
+            </div>
+          </div>
+          <div class="calendar-grid">
+            <div class="calendar-weekdays">
+              <div>Su</div><div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div>
+            </div>
+            <div id="calendar-days" class="calendar-days">
+              <!-- Populated dynamically by JavaScript -->
+            </div>
+          </div>
+        </div>
+
+        <div class="map-container">
+          <div id="sidebar-map" style="width: 100%; height: 100%; border-radius: 12px; z-index: 1;">
+            <!-- Rendered by Leaflet -->
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- Native Modal Dialog for Event Details & Dining -->
+  <dialog id="event-dialog" class="event-details-dialog">
+    <div class="dialog-wrapper">
+      <header class="dialog-header">
+        <button id="close-dialog" class="close-btn" aria-label="Close details">&times;</button>
+      </header>
+      <div class="dialog-content">
+        <!-- Event Header Card -->
+        <div class="dialog-event-card">
+          <img id="diag-image" class="dialog-hero-image" src="" alt="Event Hero Image" style="display:none;">
+          <span class="dialog-category-badge" id="diag-category">Category</span>
+          <h2 id="diag-title" class="dialog-title">Event Title</h2>
+          <div class="dialog-meta">
+            <p><strong>📍 Venue:</strong> <span id="diag-venue">Venue Name</span></p>
+            <p><strong>📅 Date:</strong> <span id="diag-date">Event Date</span></p>
+            <p><strong>🕒 Time:</strong> <span id="diag-time">Showtime</span></p>
+          </div>
+          <div class="dialog-description" id="diag-desc">
+            No description available.
+          </div>
+          <a href="#" id="diag-ticket-link" class="dialog-ticket-btn" target="_blank">Get Tickets</a>
+        </div>
+
+        <!-- Dining Enrichment Section -->
+        <div class="dialog-dining-section">
+          <h3 class="dining-header">🍔 Nearby Walkable Dining (within 0.5 miles)</h3>
+          
+          <!-- Dialog Map Container -->
+          <div id="dialog-map" style="width: 100%; height: 220px; border-radius: 12px; margin-bottom: 1.25rem; border: 1px solid var(--accent-color); z-index: 10;"></div>
+          
+          <div id="dining-list" class="dining-list">
+            <!-- Mapped restaurants show up here -->
+            <div class="loading-state">
+              Fetching local food spots...
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- JavaScript Modules -->
+  <script src="app.js"></script>
+</body>
+</html>
