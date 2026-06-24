@@ -2,6 +2,12 @@
 // Simple single-file router for Venue Orbit
 $request_uri = explode('?', $_SERVER['REQUEST_URI'], 2)[0];
 
+if (isset($_GET['debug'])) {
+    echo "Request URI: " . htmlspecialchars($request_uri) . "<br>";
+    echo "Script Name: " . htmlspecialchars($_SERVER['SCRIPT_NAME']) . "<br>";
+    exit;
+}
+
 // Serve static assets manually if they exist, else route APIs
 $static_path = __DIR__ . '/src/static' . $request_uri;
 if (file_exists($static_path) && !is_dir($static_path)) {
