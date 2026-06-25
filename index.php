@@ -32,19 +32,14 @@ if (file_exists($static_path) && !is_dir($static_path)) {
 
 // Database helper connection
 function get_db() {
-    // 1. Try persistent path outside deployment folder (e.g. at user domains/venue-orbit.com/ level)
-    $db_path = dirname(__DIR__) . '/venue_orbit.db';
+    // Check current directory first (where Git deploys it)
+    $db_path = __DIR__ . '/venue_orbit.db';
     
-    // 2. Fallback to standard paths
+    // Fallback to parent directory
     if (!file_exists($db_path)) {
-        $db_path = __DIR__ . '/venue_orbit.db';
+        $db_path = dirname(__DIR__) . '/venue_orbit.db';
     }
-    if (!file_exists($db_path) && file_exists(__DIR__ . '/10_Venue_Orbit/venue_orbit.db')) {
-        $db_path = __DIR__ . '/10_Venue_Orbit/venue_orbit.db';
-    }
-    if (!file_exists($db_path) && file_exists(__DIR__ . '/10_Venue_Orbit/10_Venue_Orbit/venue_orbit.db')) {
-        $db_path = __DIR__ . '/10_Venue_Orbit/10_Venue_Orbit/venue_orbit.db';
-    }
+    
     try {
         $db = new PDO("sqlite:" . $db_path);
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
